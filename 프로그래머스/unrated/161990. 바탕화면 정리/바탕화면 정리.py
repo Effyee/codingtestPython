@@ -1,10 +1,8 @@
 def solution(wallpaper):
-    r,c=[],[]
-    w,h=len(wallpaper),len(wallpaper[0])
-    for i in range(w):
-        for j in range(h):
+    x,y=[],[]
+    for i in range(len(wallpaper)):
+        for j in range(len(wallpaper[0])):
             if str(wallpaper[i][j])=="#":
-                r.append(i)
-                c.append(j)
-                
-    return (min(r),min(c),max(r)+1,max(c)+1)
+                x.append(i)
+                y.append(j)
+    return (min(x),min(y),max(x)+1,max(y)+1)
