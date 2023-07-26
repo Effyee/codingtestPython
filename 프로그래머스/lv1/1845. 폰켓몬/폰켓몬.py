@@ -1,7 +1,6 @@
 def solution(nums):
-    unique_types = len(set(nums))
-
-    if len(nums) / 2 > unique_types:
-        return unique_types
+    unique_poncketmon=len(set(nums))
+    if unique_poncketmon<len(nums)//2:
+        return unique_poncketmon
     else:
-        return len(nums) / 2
+        return len(nums)//2
