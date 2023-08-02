@@ -1,3 +1,3 @@
 def solution(s):
     
-    return (''.join(reversed(sorted(s))))
+    return ''.join(sorted(s,reverse=True))
