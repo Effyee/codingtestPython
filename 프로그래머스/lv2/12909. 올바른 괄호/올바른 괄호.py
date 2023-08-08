@@ -1,13 +1,13 @@
 def solution(s):
     a=list(s)
     b=[]
-    for i in a:
+    for aa in a:
         if len(b)==0:
-            b.append(i)
-        elif b[-1]=='(' and i==')':
+            b.append(aa)
+        elif b[-1]=='(' and aa==')':
             b.pop()
         else:
-            b.append(i)
+            b.append(aa)
     if len(b)==0:
         return True
     else:
