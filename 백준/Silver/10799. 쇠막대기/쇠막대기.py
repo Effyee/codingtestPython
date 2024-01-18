@@ -1,19 +1,16 @@
 import sys
-
 def solution(s):
     stack=[]
-    result = 0
+    answer=0
     for i in range(len(s)):
         if s[i]=='(':
-            stack.append('(')
+            stack.append(s[i])
         else:
-            if s[i-1] == '(':
-                stack.pop()
-                result += len(stack)
+            stack.pop()
+            if s[i-1]=='(':
+                answer+=len(stack)
             else:
-                stack.pop()
-                result += 1
-    return result
-
-s = sys.stdin.readline().rstrip()
-print(solution(s))
+                answer+=1
+    print(answer)
+s=sys.stdin.readline().rstrip()
+solution(s)
