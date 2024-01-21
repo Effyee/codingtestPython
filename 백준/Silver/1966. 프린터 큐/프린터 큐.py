@@ -1,30 +1,33 @@
-from collections import deque
+import sys
 
-def solution(n, m, numbers):
+def solution(n, m, importance):
     answer = 0
-    q = deque(numbers)
-
-    # 리스트 값 오름차순으로 정렬
-    numbers.sort()
+    max_value = max(importance)
+    i = m
 
     while True:
-        if q[0] == numbers[-1]:  # 큐의 가장 앞에 있는 원소가 중요도가 가장 높은 문서일 때
-            answer += 1  # 카운트 증가
-            # 큐와 리스트에서 모두 해당 원소를 팝
-            q.popleft()
-            numbers.pop()
-            if m == 0:  # m이 0일 때 == 원하는 원소가 큐의 가장 앞에 있을 때
+        if importance[0] == max_value:  # 현재 문서가 중요도가 가장 높은 경우
+            importance.pop(0)
+            answer += 1
+            if i == 0:
                 break
-        else:
-            q.append(q.popleft())
-        # 원하는 원소의 위치가 0일 때 -> q의 맨 뒤로, 0이 아닐 때 -> -1.
-        m = len(q) - 1 if m == 0 else m - 1
+            else:
+                i -= 1
+            max_value = max(importance)  # 최댓값 업데이트
+        else:  # 현재 문서가 중요도가 가장 높지 않은 경우
+            importance.append(importance.pop(0))
+            if i == 0:
+                i = len(importance) - 1
+            else:
+                i -= 1
 
     return answer
 
-tc = int(input())
+a = int(sys.stdin.readline().rstrip())
+answers = []
+for i in range(a):
+    n, m = map(int, input().split(' '))
+    importance = list(map(int, sys.stdin.readline().split()))
+    answers.append(solution(n, m, importance))
 
-for _ in range(tc):
-    n, m = map(int, input().split())
-    numbers = list(map(int, input().split()))
-    print(solution(n, m, numbers))
+print('\n'.join(map(str, answers)))
