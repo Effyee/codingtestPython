@@ -1,17 +1,16 @@
 from collections import deque
-import sys
+
+n,k=map(int,input().split())
+
+def solution(n,k):
+    answer=[]
+    q=deque([i for i in range(1,n+1)])
+    while q:
+        q.rotate(-(k-1))
+        answer.append(str(q.popleft()))
 
 
-def josephus(n, k):
-    dq = deque(range(1, n + 1))
-    result = []
-
-    while dq:
-        dq.rotate(-k + 1)  # rotate the deque k-1 to the left
-        result.append(dq.popleft())  # remove the kth person
-
-    return "<" + ", ".join(map(str, result)) + ">"
+    print("<"+', '.join(answer)+">")
 
 
-n, k = map(int, sys.stdin.readline().split())
-print(josephus(n, k))
+solution(n,k)
