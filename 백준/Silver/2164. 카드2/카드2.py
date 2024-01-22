@@ -1,16 +1,13 @@
 import sys
 from collections import deque
-n=int(sys.stdin.readline())
+n=int(sys.stdin.readline().strip())
 
-l=deque([i for i in range(1,n+1)])
+def solution(n):
+    q=deque([i for i in range(1,n+1)])
+    while len(q)!=1:
+        if q:
+            q.popleft()
+            q.append(q.popleft())
+    print(q[0])
 
-def solution(l):
-    while len(l)!=1:
-        if l:
-            l.popleft()
-            l.append(l.popleft())
-        else:
-            break
-    print(l[0])
-
-solution(l)
+solution(n)
