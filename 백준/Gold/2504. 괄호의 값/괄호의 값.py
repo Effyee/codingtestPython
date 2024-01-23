@@ -1,57 +1,56 @@
 import sys
 
-def isitbraket(s):
+def isitbracket(s):
     stack=[]
     for char in s:
-        if char in ['[','(']:
+        if char in ['(','[']:
             stack.append(char)
         else:
             if not stack:
                 return False
-            if char==')' and stack[-1]!='(':
+            if stack[-1]=='(' and char!=')':
                 return False
-            if char==']' and stack[-1]!='[':
+            if stack[-1]=='[' and char!=']':
                 return False
             stack.pop()
-    return len(stack)==0
+    if len(stack)!=0:
+        return False
+    else:
+        return True
 
-def calculate(s):
-    expression=[]
-    answer=[]
+def solution(s):
+    stack=[]
     for char in s:
         if char in ['(','[']:
-            expression.append(char)
+            stack.append(char)
         else:
             if char==')':
-                if expression[-1]=='(':
-                    expression.pop()
-                    expression.append(2)
+                if stack[-1]=='(':
+                    stack.pop()
+                    stack.append(2)
                 else:
                     temp=0
-                    while expression[-1]!='(':
-                        temp+=expression[-1]
-                        expression.pop()
-                    expression.pop()
-                    expression.append(2 * temp)
-            if char==']':
-                if expression[-1]=='[':
-                    expression.pop()
-                    expression.append(3)
+                    while stack[-1]!='(':
+                        temp+=stack.pop()
+                    stack.pop()
+                    stack.append(2*temp)
+            else:
+                if stack[-1]=='[':
+                    stack.pop()
+                    stack.append(3)
                 else:
                     temp=0
-                    while expression[-1]!='[':
-                        temp+=expression[-1]
-                        expression.pop()
-                    expression.pop()
-                    expression.append(3 * temp)
+                    while stack[-1]!='[':
+                        temp+=stack.pop()
+                    stack.pop()
+                    stack.append(3*temp)
+    print(sum(stack))
 
-
-    return sum(expression)
 
 
 s=sys.stdin.readline().rstrip()
 
-if isitbraket(s):
-    print(calculate(s))
+if isitbracket(s):
+    solution(s)
 else:
     print(0)
