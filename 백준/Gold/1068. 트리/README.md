@@ -12,7 +12,7 @@
 
 ### 제출 일자
 
-2024년 1월 30일 15:21:40
+2024년 2월 5일 20:52:25
 
 ### 문제 설명
 
@@ -26,7 +26,7 @@
 
 <p>현재 리프 노드의 개수는 3개이다. (초록색 색칠된 노드) 이때, 1번을 지우면, 다음과 같이 변한다. 검정색으로 색칠된 노드가 트리에서 제거된 노드이다.</p>
 
-<p style="text-align: center"><img alt="" src="" style="width: 200px; height: 185px;"></p>
+<p style="text-align: center"><img alt="" src="https://upload.acmicpc.net/d46ddf4e-1b82-44cc-8c90-12f76e5bf88f/-/preview/" style="width: 200px; height: 185px;"></p>
 
 <p>이제 리프 노드의 개수는 1개이다.</p>
 
