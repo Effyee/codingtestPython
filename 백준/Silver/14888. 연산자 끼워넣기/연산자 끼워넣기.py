@@ -1,41 +1,28 @@
-INF = 1000000000
+import sys
 
-def calculate(mode, op1, op2):
-    if mode == 0:  # +
-        return op1 + op2
-    elif mode == 1:  # -
-        return op1 - op2
-    elif mode == 2:  # *
-        return op1 * op2
-    elif mode == 3:  # /
-        return int(op1 / op2)  # op1 // op2 로 수행시 음수의 나눗셈에서 오류 발생
+n=int(input())
+number=list(map(int,sys.stdin.readline().split()))
+add,sub,mul,div=map(int,sys.stdin.readline().split())
 
-def backtracking(value, index, n, operand, operator_cnt, ans):
-    if index == n:
-        ans[0] = max(ans[0], value)
-        ans[1] = min(ans[1], value)
+max_result=-int(1e9)
+min_result=int(1e9)
+
+def dfs(add,sub,mul,div,sum,idx):
+    global max_result, min_result
+    if idx==n:
+        max_result= max(sum,max_result)
+        min_result=min(sum,min_result)
         return
-    for mode in range(4):
-        if operator_cnt[mode] <= 0:
-            continue
-        operator_cnt[mode] -= 1
-        next_value = calculate(mode, value, operand[index])
-        backtracking(next_value, index + 1, n, operand, operator_cnt, ans)
-        operator_cnt[mode] += 1
 
-def solution(n, operand, operator_cnt):
-    ans = [-INF, INF]   #ans[0]: max_value, ans[1]: min_valu
+    if add:
+        dfs(add-1,sub,mul,div,sum+number[idx],idx+1)
+    if sub:
+        dfs(add,sub-1,mul,div,sum-number[idx],idx+1)
+    if mul:
+        dfs(add,sub,mul-1,div,sum*number[idx],idx+1)
+    if div:
+        dfs(add,sub,mul,div-1,int(sum/number[idx]),idx+1)
 
-    backtracking(operand[0], 1, n, operand, operator_cnt, ans)
-
-    return ans
-
-if __name__ == "__main__":
-    n = int(input())
-    operand = list(map(int, input().split()))
-    operator_cnt = list(map(int, input().split()))
-
-    ans = solution(n, operand, operator_cnt)
-
-    print(int(ans[0]))
-    print(int(ans[1]))
+dfs(add,sub,mul,div,number[0],1)
+print(max_result)
+print(min_result)
