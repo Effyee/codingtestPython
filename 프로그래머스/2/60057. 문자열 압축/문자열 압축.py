@@ -1,20 +1,21 @@
+INF = int(1e9)
+
 def solution(s):
-    answer = len(s)
-    for i in range(1, len(s)//2 + 1):  
-        l = make_list(s, i)
-        result = make_shorteds(l)
-        if len(result) < answer:
-            answer = len(result)
-    
+    answer = INF
+    if len(s) == 1:  
+        return 1
+    for i in range(1, len(s)//2 + 1):
+        l = cutted_list(s, i)
+        answer = min(answer, make_shortened(l))
     return answer
 
-def make_list(s, length):
+def cutted_list(s, length):
     l = []
     for i in range(0, len(s), length):
         l.append(s[i:i+length])
     return l
 
-def make_shorteds(l):
+def make_shortened(l):
     cnt = 1
     result = ''
     for i in range(1, len(l)):
@@ -23,8 +24,11 @@ def make_shorteds(l):
         else:
             if cnt >= 2:
                 result += str(cnt) + l[i-1]
+                cnt = 1
             else:
                 result += l[i-1]
-            cnt = 1
-    result += str(cnt) + l[len(l)-1] if cnt >= 2 else l[len(l)-1]
-    return result
+    if cnt >= 2:
+        result += str(cnt) + l[-1]
+    else:
+        result += l[-1]
+    return len(result)
