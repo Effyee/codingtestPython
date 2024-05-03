@@ -1,34 +1,34 @@
-INF = int(1e9)
-
 def solution(s):
-    answer = INF
-    if len(s) == 1:  
-        return 1
-    for i in range(1, len(s)//2 + 1):
+    answer = len(s)  # 최소 길이를 초기 문자열 길이로 설정
+    for i in range(1, len(s)//2 + 1):  # 1부터 시작하여 절반 길이까지
         l = cutted_list(s, i)
-        answer = min(answer, make_shortened(l))
+        compressed = make_news(l)
+        answer = min(answer, len(compressed))  # 가장 짧은 길이로 업데이트
     return answer
 
-def cutted_list(s, length):
+def cutted_list(s, n):
     l = []
-    for i in range(0, len(s), length):
-        l.append(s[i:i+length])
+    for i in range(0, len(s), n):
+        l.append(s[i:i+n])
     return l
 
-def make_shortened(l):
+def make_news(l):
+    new_s = ''
     cnt = 1
-    result = ''
     for i in range(1, len(l)):
-        if l[i-1] == l[i]:
-            cnt += 1
-        else:
-            if cnt >= 2:
-                result += str(cnt) + l[i-1]
-                cnt = 1
+        if l[i-1] != l[i]:
+            if cnt == 1:  # 반복되지 않는 경우, 숫자를 붙이지 않음
+                new_s += l[i-1]
             else:
-                result += l[i-1]
-    if cnt >= 2:
-        result += str(cnt) + l[-1]
+                new_s += str(cnt) + l[i-1]
+            cnt = 1
+        else:
+            cnt += 1
+    # 마지막으로 남은 문자열 처리
+    if cnt == 1:
+        new_s += l[-1]
     else:
-        result += l[-1]
-    return len(result)
+        new_s += str(cnt) + l[-1]
+    return new_s
+
+
