@@ -1,45 +1,47 @@
 def solution(p):
-    return bfs(p)
-
+    return dfs(p)
 
 def is_balanced(s):
-    left, right = 0, 0
-    for i in range(len(s)):
-        if s[i] == '(':
-            left += 1
-        else:
-            right += 1
-        if left == right:
-            return s[:i+1], s[i+1:]
-
-
-def is_correct(s):
-    q=[]
+    left,right=0,0
     for i in range(len(s)):
         if s[i]=='(':
-            q.append(s[i])
+            left+=1
         else:
-            if not q:
+            right+=1
+        if left==right:
+            return s[:i+1],s[i+1:]
+
+def is_correct(s):
+    stack=[]
+    for i in range(len(s)):
+        if s[i]=='(':
+            stack.append('(')
+        else:
+            if len(stack)==0:
                 return False
             else:
-                q.pop()
-    if not q:
+                stack.pop()
+    if not stack:
         return True
+    else:
+        return False
 
-def bfs(s):
+def dfs(s):
     if s=='':
         return ''
-
     u,v=is_balanced(s)
+    
     if is_correct(u):
-        return u+bfs(v)
+        return u+dfs(v)
+    
     else:
-        s1='('+bfs(v)+')'
-        s2=u[1:-1]
-        s3=''
-        for i in range(len(s2)):
-            if s2[i]=='(':
-                s3+=')'
+        s1='('+dfs(v)+')'
+        s2=''
+        s3=u[1:-1]
+        for i in s3:
+            if i=='(':
+                s2+=')'
             else:
-                s3+='('
-        return s1+s3
+                s2+='('
+        return s1+s2
+
