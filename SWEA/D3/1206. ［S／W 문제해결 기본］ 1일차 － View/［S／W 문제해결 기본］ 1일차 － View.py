@@ -1,6 +1,5 @@
 def find_max(building):
     max_index=0
-    second_index=0
     for i in range(5):
         if building[max_index]<building[i]:
             max_index=i
