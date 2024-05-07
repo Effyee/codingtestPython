@@ -9,8 +9,8 @@ def dfs(n):
 
             chk=int(''.join(map(str,lst)))
             if (n,chk) not in v:
-                dfs(n+1)
                 v.append((n,chk))
+                dfs(n+1)
    
             lst[j],lst[i]=lst[i],lst[j]
 
