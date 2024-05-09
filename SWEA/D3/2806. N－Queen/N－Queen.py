@@ -1,26 +1,28 @@
-def check(x, row):
+def check(x):
     for i in range(x):
-        if row[i] == row[x] or abs(row[i] - row[x]) == abs(i - x):
+        if row[x] == row[i] or abs(x - i) == abs(row[x] - row[i]):
             return False
     return True
 
-def NQueen(x, n, row):
+def NQueen(x, N, row):
     global answer
-    if x == n:
+    if x == N:
         answer += 1
         return
     else:
-        for i in range(n):
+        for i in range(N):
             row[x] = i
-            if check(x, row):
-                NQueen(x + 1, n, row)
+            if check(x):
+                NQueen(x + 1, N, row)
 
 tc = int(input())
 
 for _ in range(tc):
-    n = int(input())
-    row = [0] * n
-    answer = 0
-    NQueen(0, n, row)
+    N = int(input())
+    row = [0] * N
 
-    print(f'#{_ + 1} {answer}')
+    answer = 0
+
+    NQueen(0, N, row)
+
+    print(f'#{_+1} {answer}')
