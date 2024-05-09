@@ -1,15 +1,15 @@
-tc = int(input())
+tc=int(input())
 
 for _ in range(tc):
-    n = int(input())
-    scores = list(map(int, input().split()))
+    N=int(input())
+    scores=list(map(int,input().split()))
 
-    possible_scores = {0}
+    possible_scores={0}
 
     for score in scores:
-        temp = set()
+        tmp=set()
         for ps in possible_scores:
-            temp.add(ps + score)
-        possible_scores.update(temp)
+            tmp.add(ps+score)
+        possible_scores.update(tmp)
 
-    print(f'#{_ + 1} {len(possible_scores)}')
+    print(f'#{_+1} {len(possible_scores)}')
