@@ -1,24 +1,25 @@
-def dfs(index, score, calorie):
-    global max_score, N, L, ingredients
-    # 제한 칼로리를 초과한 경우 더 이상 탐색하지 않음
-    if calorie > L:
+def dfs(total_taste,total_calorie,cnt):
+    global answer
+    if cnt==N:
+        if total_calorie<L:
+            answer=max(answer,total_taste)
         return
-    # 현재까지 조합의 점수가 최대 점수보다 큰 경우 업데이트
-    if score > max_score:
-        max_score = score
-    # 모든 재료를 확인한 경우 탐색 종료
-    if index == N:
-        return
-    # 현재 재료를 선택하는 경우
-    dfs(index + 1, score + ingredients[index][0], calorie + ingredients[index][1])
-    # 현재 재료를 선택하지 않는 경우
-    dfs(index + 1, score, calorie)
+    dfs(total_taste+taste_score[cnt],total_calorie+calorie[cnt],cnt+1)
+    dfs(total_taste,total_calorie,cnt+1)
 
-# 입력
-T = int(input())
-for t in range(1, T+1):
-    N, L = map(int, input().split())
-    ingredients = [tuple(map(int, input().split())) for _ in range(N)]
-    max_score = 0
-    dfs(0, 0, 0)
-    print(f"#{t} {max_score}")
+tc=int(input())
+
+for _ in range(tc):
+    #재료의 수, 제한 칼로리
+    N,L=map(int,input().split())
+    taste_score=[]
+    calorie=[]
+    #맛 점수, 칼로리
+    for i in range(N):
+        score,cal=map(int,input().split())
+        taste_score.append(score)
+        calorie.append(cal)
+
+    answer=0
+    dfs(0,0,0)
+    print(f'#{_+1} {answer}')
