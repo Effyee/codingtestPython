@@ -4,7 +4,9 @@ def bfs(start_x, start_y):
     q = deque([(start_x, start_y)])
     visited[start_x][start_y] = True
 
-    dx = [0, 0, -1]  # 방향을 위로 변경
+
+    #오른쪽, 왼쪽이 우선 그리고 위
+    dx = [0, 0, -1]
     dy = [1, -1, 0]
 
     while q:
@@ -18,6 +20,7 @@ def bfs(start_x, start_y):
                 q.append((nx, ny))
                 visited[nx][ny] = True
                 break
+                #여기서 break를 안걸어서 분기를 안걸어주면
     return False
 
 for _ in range(10):
