@@ -1,23 +1,24 @@
-def dfs(x, y, n, prob):
-    if visited[x][y]: return 0  # 이미 방문한 위치면 단순하지 않은 경로
-    if n == 0: return prob  # 모든 이동을 마쳤으면 현재 확률을 반환
+def dfs(x, y, ref, cnt):
+    if visited[x][y]:
+        return
+    if cnt == time:
+        global possibility
+        possibility += ref
+        return
 
-    visited[x][y] = True  # 현재 위치 방문 처리
+    visited[x][y] = True
 
-    # 동서남북 방향으로 이동
-    ret = 0
-    ret += dfs(x, y + 1, n - 1, prob * probs[0])
-    ret += dfs(x, y - 1, n - 1, prob * probs[1])
-    ret += dfs(x + 1, y, n - 1, prob * probs[2])
-    ret += dfs(x - 1, y, n - 1, prob * probs[3])
+    dfs(x, y+1, ref*p[0], cnt+1)
+    dfs(x, y-1, ref*p[1], cnt+1)
+    dfs(x+1, y, ref*p[2], cnt+1)
+    dfs(x-1, y, ref*p[3], cnt+1)
 
-    visited[x][y] = False  #백트래킹
-
-    return ret
+    visited[x][y] = False  # 방문 상태를 원래대로 되돌림
 
 
-N, e, w, s, n = map(int, input().split())
-probs = [e / 100, w / 100, s / 100, n / 100]  
-visited = [[False] * 29 for _ in range(29)]
-
-print(dfs(14, 14, N, 1))
+time, e, w, s, n = map(int, input().split())
+p = [e/100, w/100, s/100, n/100]
+visited = [[False]*29 for _ in range(29)]
+possibility = 0
+dfs(14, 14, 1, 0)  # 시작 위치 (14, 14)는 가운데 위치를 의미
+print(possibility)
