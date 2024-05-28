@@ -1,18 +1,13 @@
+from collections import defaultdict
 def solution(clothes):
     answer = 0
-    dic={}
-    for cloth in clothes:
-        if cloth[1] in dic:
-            dic[cloth[1]]+=1
-        else:
-            dic[cloth[1]]=1
-    
-    
-    for i in dic:
-        if answer==0:
-            answer=dic[i]+1
-        else:
-            answer*=(dic[i]+1)
-    
-    
-    return answer-1
+    dic = defaultdict(int)
+    for cloth, type in clothes:
+        dic[type] += 1
+
+    answer = 1
+    for type in dic:
+        answer *= (dic[type] + 1) # 각 종류별로 옷을 입는 경우의 수 + 안 입는 경우
+
+    answer -= 1 # 모든 종류에서 아무것도 선택하지 않는 경우 제외
+    return answer
