@@ -1,17 +1,20 @@
 from collections import defaultdict
 
 def solution(genres, plays):
+    answer = []
     genres_dict=defaultdict(int)
-    plays_dict=defaultdict(list)
-    for i,(genre,play) in enumerate(zip(genres,plays)):
-        genres_dict[genre]+=play
-        plays_dict[genre].append((play,i))
+    musics=[]
+    for g,p in zip(genres,plays):
+        genres_dict[g]+=p
+    genres_dict=sorted(genres_dict.items(),key=lambda x:x[1],reverse=True)
 
-    sorted_genre = sorted(genres_dict.items(), key=lambda x: x[1], reverse=True)
-    answer=[]
-
-    for genre,_ in sorted_genre:
-        sorted_play=sorted(plays_dict[genre],key=lambda x:(-x[0],x[1]))
-        answer.extend([song_id for _, song_id in sorted_play[:2]])
-
+    for i,(g,p) in enumerate(zip(genres,plays)):
+        musics.append([i,g,p])
+    musics=sorted(musics,key=lambda x:x[2],reverse=True)
+    for g in genres_dict:
+        cnt=0
+        for music in musics:
+            if music[1]==g[0] and cnt!=2:
+                answer.append(music[0])
+                cnt+=1
     return answer
