@@ -1,7 +1,7 @@
 def solution(nums):
-    answer = 0
-    if len(set(nums))<len(nums)//2:
-        return len(set(nums))
-    else:
+    set_nums=set(nums)
+    if len(set_nums)>=(len(nums)//2):
         return len(nums)//2
-    return answer
+    else:
+        return len(set_nums)
+    
