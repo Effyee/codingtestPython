@@ -1,16 +1,15 @@
-from itertools import permutations
+answer=0
+def dfs(dungeons,stress,visited,cnt):
+    global answer
+    answer=max(answer,cnt)
+    for i in range(len(dungeons)):
+        if stress>=dungeons[i][0] and not visited[i]:
+            visited[i]=True
+            dfs(dungeons,stress-dungeons[i][1],visited,cnt+1)
+            visited[i]=False
+
 def solution(k, dungeons):
-    answer = 0
-    pos=[]
-    for p in permutations(dungeons,len(dungeons)):
-        pos.append(p)
-
-    for i in range(len(pos)):
-        cnt,stress = 0,k
-        for j in range(len(dungeons)):
-            if stress>=pos[i][j][0]:
-                stress-=pos[i][j][1]
-                cnt+=1
-
-        answer=max(answer,cnt)
+    global answer
+    visited=[False]*len(dungeons)
+    dfs(dungeons,k,visited,0)
     return answer
