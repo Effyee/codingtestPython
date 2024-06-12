@@ -1,11 +1,12 @@
 def solution(s):
-    c1 = 0  # 이진 변환 횟수
-    c2 = 0  # 제거된 0의 개수
+    lst=list(map(int,list(s)))
+    r,b=0,0
+    while len(lst)!=1:
+        n_lst=[num for num in lst if num==1]
+        r+=len(lst)-len(n_lst)
+        binary=list(bin(len(n_lst)))
+        binary=binary[2:]
+        b+=1
+        lst=list(map(int,binary))
 
-    while s != '1':
-        c1 += 1
-        removed_zeros = s.count('0')  # 제거될 0의 개수
-        c2 += removed_zeros
-        s = bin(s.count('1'))[2:]  # 0 제거 후 길이를 이진수로 변환
-
-    return [c1, c2]
+    return [b,r]
