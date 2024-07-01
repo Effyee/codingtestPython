@@ -1,21 +1,26 @@
+ans = 0
+num = 0
+chkX = [False for i in range(32)]
+chkCross1 = [False for i in range(32)]
+chkCross2 = [False for i in range(32)]
+
+def nq(y, n):
+    global ans
+    x = 0
+    if y > n:
+        ans+=1
+    for x in range(1, n+1):
+        if chkX[x] or chkCross1[y + x] or chkCross2[(y - x) + n]:
+            continue
+        chkX[x] = True
+        chkCross1[y + x] = True
+        chkCross2[(y - x) + n] = True
+
+        nq(y + 1, n)
+        chkX[x] = False
+        chkCross1[y + x] = False
+        chkCross2[(y - x) + n] = False
+
 def solution(n):
-	# 어태까지의 queen 위치 ls, 내가 두려는 위치 new
-    def check(ls, new):
-        for i in range(len(ls)):
-        	# 같은 열에 퀸을 둔 적이 있거나, 대각 위치에 둔 적이 있다면, return False
-            if new == ls[i] or (len(ls)-i) == abs(ls[i]-new):
-                return False
-        return True
-    def dfs(n, ls):
-    	# 끝 행까지 도달! return 1
-        if len(ls) == n:
-            return 1
-        # 끝 행이 아니라면, 다음 줄을 다시 탐색
-        cnt = 0
-        for i in range(n):
-            if check(ls, i):
-                cnt += dfs(n, ls+[i])
-        # 탐색 결과를 return
-        return cnt
-        
-    return dfs(n, [])
+    nq(1, n)
+    return ans
