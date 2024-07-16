@@ -1,28 +1,29 @@
 import sys
+input=sys.stdin.readline
+INF=int(1e9)
 
 n=int(input())
-number=list(map(int,sys.stdin.readline().split()))
-add,sub,mul,div=map(int,sys.stdin.readline().split())
+numbers=list(map(int,input().split()))
+plus,minus,mul,div=map(int,input().split())
 
-max_result=-int(1e9)
-min_result=int(1e9)
+maximum,minimum=-INF,INF
 
-def dfs(add,sub,mul,div,sum,idx):
-    global max_result, min_result
+def dfs(result,idx,plus,minus,mul,div):
+    global maximum
+    global minimum
     if idx==n:
-        max_result= max(sum,max_result)
-        min_result=min(sum,min_result)
+        maximum=max(maximum,result)
+        minimum=min(minimum,result)
         return
+    if plus>0:
+        dfs(result+numbers[idx],idx+1,plus-1,minus,mul,div)
+    if minus>0:
+        dfs(result-numbers[idx],idx+1,plus,minus-1,mul,div)
+    if mul>0:
+        dfs(result*numbers[idx],idx+1,plus,minus,mul-1,div)
+    if div>0:
+        dfs(int(result/numbers[idx]),idx+1,plus,minus,mul,div-1)
 
-    if add:
-        dfs(add-1,sub,mul,div,sum+number[idx],idx+1)
-    if sub:
-        dfs(add,sub-1,mul,div,sum-number[idx],idx+1)
-    if mul:
-        dfs(add,sub,mul-1,div,sum*number[idx],idx+1)
-    if div:
-        dfs(add,sub,mul,div-1,int(sum/number[idx]),idx+1)
+dfs(numbers[0],1,plus,minus,mul,div)
 
-dfs(add,sub,mul,div,number[0],1)
-print(max_result)
-print(min_result)
+print(maximum, minimum)
