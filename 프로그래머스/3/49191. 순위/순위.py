@@ -1,31 +1,23 @@
 def solution(n, results):
-    graph = [[0] * (n) for _ in range(n)]
-
-    for A,B in results:
-        graph[A - 1][B - 1] = 1
-        graph[B - 1][A - 1] = -1
-
-
-    for i in range(n): #중간노드
-        for j in range(n):#시작 노드
-            for k in range(n):# 종점 노드
-                if graph[j][k] != 0: #이미 결과가 정해져 있음
-                    continue
-                if graph[j][i] == 1 and graph[i][k] == 1: # j 가 i를 이기고 i가 k를 이겼으니 j 가 k를 이긴거나 마찬가지
-                    graph[j][k] = 1
-                elif graph[j][i] == -1 and graph[i][k] == -1: #위와 반대의 상황
-                    graph[j][k] = -1
-
-    # [[4, 3], [4, 2], [3, 2], [1, 2], [2, 5]]에 대한 그래프
-    # 순위를 정할때 당연히 "나"이외의 모든 노드들과 관계를 갖고 있어야 한다.
-    # [0,   1,   0,  0, 1]
-    # [-1,  0,  -1, -1, 1] -> 순위 확정
-    # [0,   1,   0, -1, 1]
-    # [0,   1,   1,  0, 1]
-    # [-1, -1,  -1, -1, 0] -> 순위 확정
     answer = 0
-    for g in graph:
-        if len(list(filter(lambda x: x != 0,g))) == n - 1:
-            answer += 1
+    graph = [[0]*n for _ in range(n)]
 
+    for result in results:
+        player1, player2 = result
+        graph[player1-1][player2-1] = 1  # player1이 player2를 이김
+        graph[player2-1][player1-1] = -1  # player2가 player1에게 진다
+
+    for k in range(n):
+        for i in range(n):
+            for j in range(n):
+                if i == j or graph[i][j] in [1, -1]:
+                    continue
+                if graph[i][k] == 1 and graph[k][j] == 1:
+                    # i가 k를 이기고 k가 j를 이긴 경우
+                    graph[i][j] = 1  # i가 j를 이김
+                    graph[j][i] = -1  # j가 i에게 짐
+
+    for row in graph:
+        if row.count(0) == 1:
+            answer += 1
     return answer
