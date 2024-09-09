@@ -1,58 +1,63 @@
-import sys
 from collections import deque
 
-input = sys.stdin.readline
+#맵의 크기
+n=int(input())
 
-# 그래프 초기화
-n = int(input())
-graph = [[0] * n for _ in range(n)]
+#맵:0, 뱀:1, 사과:2
+maps=[[0]*n for _ in range(n)]
 
-# 사과 배치
-k = int(input())
+#사과 배치
+k=int(input())
+
 for _ in range(k):
-    a, b = map(int, input().split())
-    graph[a - 1][b - 1] = 2
+    x,y=map(int,input().split())
+    maps[x-1][y-1]=2
 
-# 이동
-info = {}
-move = int(input())
+#방향 전환
+l=int(input())
+info={}
 
-for _ in range(move):
-    second, direction = input().split()
-    info[int(second)] = direction
+for i in range(l):
+    time,direction=input().split()
+    info[int(time)]=direction
 
-# 초기화
-direction = 0
-snakes = deque([(0, 0)])
-x, y = 0, 0
-graph[x][y] = 1  # 뱀의 초기 위치 표시
-dx = [0, 1, 0, -1]
-dy = [1, 0, -1, 0]
-time = 0
+#방향
+#동,남,서,북
+dir=0
+time=0
+dx=[0,1,0,-1]
+dy=[1,0,-1,0]
+x,y=0,0
+snakes=deque([(x,y)])
 
 while True:
-    # 해당 시간에 방향을 바꿔야한다면
-    if time in info.keys():
-        if info[time] == 'L':
-            direction = (direction - 1) % 4
-        else:
-            direction = (direction + 1) % 4
 
-    nx = x + dx[direction]
-    ny = y + dy[direction]
-    time += 1
-    # 그래프의 범위를 벗어나거나 해당 공간에 몸통이 있으면
-    if nx < 0 or ny < 0 or nx >= n or ny >= n or graph[nx][ny] == 1:
+    if time in info.keys():
+        if info[int(time)]=='D':
+            if dir==3:
+                dir=0
+            else:
+                dir+=1
+        else:
+            if dir==0:
+                dir=3
+            else:
+                dir-=1
+
+    nx=x+dx[dir]
+    ny=y+dy[dir]
+    time+=1
+
+    if nx<0 or ny<0 or nx>=n or ny>=n or (nx,ny) in snakes:
         print(time)
         break
-    # 이동하는 공간이 사과가 있다면
-    if graph[nx][ny] == 2:
-        graph[nx][ny] = 1
-        snakes.append((nx, ny))
-    # 사과가 없다면
+    if maps[nx][ny]==2:
+        snakes.append((nx,ny))
+        maps[nx][ny]=1
+        x,y=nx,ny
     else:
-        graph[nx][ny] = 1
+        snakes.popleft()
         snakes.append((nx, ny))
-        tail_x, tail_y = snakes.popleft()
-        graph[tail_x][tail_y] = 0
-    x, y = nx, ny
+        maps[x][y]=0
+        x, y = nx, ny
+
