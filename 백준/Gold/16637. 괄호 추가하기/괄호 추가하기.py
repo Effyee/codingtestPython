@@ -1,46 +1,38 @@
-def calculate(a, op, b):
-    if op == '+':
-        return a + b
-    elif op == '-':
-        return a - b
-    elif op == '*':
-        return a * b
+import sys
+input=sys.stdin.readline
 
-def backtrack(index, current_value):
-    global max_result
+def cal(a,op,b):
+    if op=='+':
+        return a+b
+    elif op=='-':
+        return a-b
+    else:
+        return a*b
 
-    # 모든 연산을 다 수행한 경우 최댓값 갱신
-    if index >= len(operators):
-        max_result = max(max_result, current_value)
+answer=-int(1e9)
+
+def backtrack(index,result):
+    global answer
+    if index>=len(ops):
+        answer=max(answer,result)
         return
+    #1. 현재 연산자에 괄호
+    backtrack(index+1,cal(result,ops[index],nums[index+1]))
+    #2. 다음 연산자에 괄호
+    if index+1<len(ops):
+        next_value=cal(nums[index+1],ops[index+1],nums[index+2])
+        backtrack(index+2, cal(result,ops[index],next_value))
 
-    # 1. 괄호를 사용하지 않고 현재 숫자를 연산
-    next_value = calculate(current_value, operators[index], numbers[index + 1])
-    backtrack(index + 1, next_value)
-
-    # 2. 괄호를 사용해서 다음 연산을 먼저 수행
-    if index + 1 < len(operators):
-        bracket_value = calculate(numbers[index + 1], operators[index + 1], numbers[index + 2])
-        next_value = calculate(current_value, operators[index], bracket_value)
-        backtrack(index + 2, next_value)
-
-# 입력 처리
-N = int(input().strip())
-expression = input().strip()
-
-# 숫자와 연산자를 분리
-numbers = []
-operators = []
+N=int(input())
+s=input().strip()
+nums,ops=[],[]
 
 for i in range(N):
-    if i % 2 == 0:
-        numbers.append(int(expression[i]))
+    if i%2==0:
+        nums.append(int(s[i]))
     else:
-        operators.append(expression[i])
+        ops.append(s[i])
 
-# 백트래킹 수행
-max_result = -float('inf')
-backtrack(0, numbers[0])
+backtrack(0,nums[0])
 
-# 결과 출력
-print(max_result)
+print(answer)
