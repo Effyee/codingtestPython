@@ -1,21 +1,22 @@
-n, m = map(int, input().split())
+import sys
+input=sys.stdin.readline
 
-answer = []
-visited = [False] * (n + 1) 
+N,M=map(int,input().split())
 
-
+visited=[False]*(N+1)
+answer=[]
 def backtrack():
-    if len(answer) == m:
-        print(" ".join(map(str, answer)))  
+    if len(answer)==M:
+        print(' '.join(map(str,answer)))
         return
 
-    for i in range(1, n + 1):  
-        if not visited[i]:  
-            visited[i] = True  
-            answer.append(i)  
-            backtrack()  
-            answer.pop() 
-            visited[i] = False  
+    for i in range(1,N+1):
+        if not visited[i]:
+            visited[i]=True
+            answer.append(i)
+            backtrack()
+            visited[i]=False
+            answer.pop()
 
 
 backtrack()
