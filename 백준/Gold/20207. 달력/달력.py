@@ -1,37 +1,39 @@
 import sys
 input = sys.stdin.readline
 
-# 입력 받기
-N = int(input().strip())
-events = [tuple(map(int, input().split())) for _ in range(N)]
+N = int(input())
+schedules = []
+for _ in range(N):
+    start, end = map(int, input().split())
+    schedules.append([start, end, end - start + 1])
 
-# 1. 시작 날짜가 빠른 순으로 정렬, 같다면 종료 날짜가 긴 순으로 정렬
-events.sort(key=lambda x: (x[0], -x[1]))
+# 정렬 (시작일 기준, 길이 내림차순)
+schedules = sorted(schedules, key=lambda x: (x[0], -x[2]))
 
-# 2. 날짜별로 몇 개의 일정이 있는지 기록할 배열
-calendar = [0] * 366  # 1일부터 365일까지 사용
+# 종료일은 모든 스케줄 중 가장 큰 값으로
+start_date = min(schedule[0] for schedule in schedules)
+end_date = max(schedule[1] for schedule in schedules)
 
-# 일정 배치
-for s, e in events:
-    for day in range(s, e + 1):
-        calendar[day] += 1  # 해당 날짜의 일정 개수 증가
+height = [0] * (end_date + 1)
 
-# 3. 코팅지 면적 계산
-total_area = 0
-width, max_height = 0, 0
+# 일정이 겹치는 날마다 높이 쌓기
+for schedule in schedules:
+    start, end = schedule[0], schedule[1]
+    for i in range(start, end + 1):
+        height[i] += 1
 
-for day in range(1, 366):
-    if calendar[day] > 0:  # 일정이 있는 날이면
-        width += 1
-        max_height = max(max_height, calendar[day])
-    else:  # 일정이 없는 날이면 이전 구간 종료
-        if width > 0:
-            total_area += width * max_height
-        width, max_height = 0, 0  # 초기화
+# 넓이 계산
+answer = 0
+i = start_date
+while i < len(height):
+    if height[i] == 0:
+        i += 1
+        continue
+    w, h = 0, 0
+    while i < len(height) and height[i] != 0:
+        w += 1
+        h = max(h, height[i])
+        i += 1
+    answer += w * h
 
-# 마지막 남은 일정 처리
-if width > 0:
-    total_area += width * max_height
-
-# 정답 출력
-print(total_area)
+print(answer)
