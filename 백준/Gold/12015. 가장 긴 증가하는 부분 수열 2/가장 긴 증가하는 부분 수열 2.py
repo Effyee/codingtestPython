@@ -1,23 +1,26 @@
-n = int(input())
-arr = list(map(int, input().split()))
+import sys
+input=sys.stdin.readline
 
-def binary_search(group, x):
-    start, end = 0, len(group) - 1
-    while start <= end:
-        mid = (start + end) // 2
-        if group[mid] < x:
-            start = mid + 1
+n=int(input())
+arr=list(map(int,input().split()))
+
+li=[arr[0]]
+
+def binary_search(li,x):
+    start,end=0,len(li)-1
+    while start<=end:
+        mid=(start+end)//2
+        if li[mid]<x:
+            start=mid+1
         else:
-            end = mid - 1
+            end=mid-1
     return start
 
-group = [arr[0]]
-
-for i in range(1, n):
-    if arr[i] > group[-1]:
-        group.append(arr[i])
+for i in range(1,n):
+    if li[-1]<arr[i]:
+        li.append(arr[i])
     else:
-        idx = binary_search(group, arr[i])
-        group[idx] = arr[i]
+        idx=binary_search(li,arr[i])
+        li[idx]=arr[i]
 
-print(len(group))
+print(len(li))
