@@ -1,25 +1,15 @@
 import sys
+from collections import Counter
+input=sys.stdin.readline
 
-words=list(sys.stdin.readline().strip())
-alphabets=[0]*26
-
-for i in range(len(words)):
-    if words[i].islower():
-        words[i]=words[i].upper()
-
-for word in words:
-    alphabets[ord(word)-65]+=1
-
-m=max(alphabets)
-count=0
-
-index=0
-for word in set(words):
-    if alphabets[ord(word)-65]==m:
-        index=ord(word)-65
-        count+=1
-
-if count>1:
-    print('?')
+word=str(input().rstrip())
+word=word.upper()
+C=Counter(word)
+l=sorted(list(C.items()),key=lambda x:x[1],reverse=True)
+if len(l)==1:
+    print(l[0][0])
 else:
-    print(chr(index+65))
+    if l[0][1]==l[1][1]:
+        print('?')
+    else:
+        print(l[0][0])
