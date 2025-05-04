@@ -1,46 +1,53 @@
-import sys
 from collections import deque
-from itertools import combinations
 import copy
-
-input = sys.stdin.readline
-
-n, m = map(int, input().split())
-
-graph = []
-for _ in range(n):
-    graph.append(list(map(int, input().split())))
-
-
-def count_v(graph):
-    return sum(row.count(0) for row in graph)
-
-
-pos = [(i, j) for i in range(n) for j in range(m) if graph[i][j] == 0]
-walls = list(combinations(pos, 3))
-
-answer = 0  # 최대값을 찾아야 하므로 0으로 초기화
-
+n,m=map(int,input().split())
+graph=[]
+dx=[0,0,-1,1]
+dy=[-1,1,0,0]
 
 def bfs():
+    q=deque()
+    tmp_graph=copy.deepcopy(graph)
+
+    for i in range(n):
+        for j in range(m):
+            if tmp_graph[i][j]==2:
+                q.append((i,j))
+    while q:
+        x,y=q.popleft()
+
+        for i in range(4):
+            nx=x+dx[i]
+            ny=y+dy[i]
+
+            if nx<0 or nx>=n or ny<0 or ny>=m:
+                continue
+            if tmp_graph[nx][ny]==0:
+                tmp_graph[nx][ny]=2
+                q.append((nx,ny))
     global answer
-    for wall in walls:
-        cgraph = copy.deepcopy(graph)
-        for x, y in wall:
-            cgraph[x][y] = 1
+    cnt=0
 
-        q = deque([(i, j) for i in range(n) for j in range(m) if cgraph[i][j] == 2])
-        while q:
-            x, y = q.popleft()
-            for dx, dy in zip([0, 0, -1, 1], [-1, 1, 0, 0]):
-                nx, ny = x + dx, y + dy
-                if 0 <= nx < n and 0 <= ny < m and cgraph[nx][ny] == 0:
-                    cgraph[nx][ny] = 2
-                    q.append((nx, ny))
+    for i in range(n):
+        cnt+=tmp_graph[i].count(0)
 
-        new_answer = count_v(cgraph)
-        answer = max(answer, new_answer)
+    answer=max(answer,cnt)
 
+def makeWall(cnt):
+    if cnt==3:
+        bfs()
+        return
 
-bfs()
+    for i in range(n):
+        for j in range(m):
+            if graph[i][j]==0:
+                graph[i][j]=1
+                makeWall(cnt+1)
+                graph[i][j]=0
+
+for i in range(n):
+    graph.append(list(map(int,input().split())))
+
+answer=0
+makeWall(0)
 print(answer)
