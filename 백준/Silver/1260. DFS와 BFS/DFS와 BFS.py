@@ -1,52 +1,40 @@
 import sys
-
-input = sys.stdin.readline
 from collections import deque
+input=sys.stdin.readline
 
-N, M, V = map(int, input().split())
+n,m,v=map(int,input().split())
+graph=[[] for _ in range(n+1)]
+for _ in range(m):
+    start,end=map(int,input().split())
+    graph[start].append(end)
+    graph[end].append(start)
+    graph[start].sort()
+    graph[end].sort()
 
-graph = [[] for _ in range(N + 1)]
+visited=[False]*(n+1)
+visited[v]=True
+def dfs(v):
+    print(v, end=' ')
+    for node in graph[v]:
+        if not visited[node]:
+            visited[node]=True
+            dfs(node)
+    return
 
-# 간선 정보 입력 (M번 반복)
-for _ in range(M):
-    arr, des = map(int, input().split())
-    graph[arr].append(des)
-    graph[des].append(arr)
+dfs(v)
+print()
 
-# 작은 숫자부터 방문하도록 정렬
-for i in range(1, N + 1):
-    graph[i].sort()
-
-visited = [False] * (N + 1)
-
-
-# DFS 구현
-def dfs(now, visited):
-    print(now, end=' ')  # 첫 방문 노드 출력
-    visited[now] = True
-    for i in graph[now]:
-        if not visited[i]:
-            dfs(i, visited)
-
-
-visited = [False] * (N + 1) 
-dfs(V, visited)
-print()  
-
-
-# BFS 구현
-def bfs(start, visited):
-    q = deque([start])
-    visited[start] = True  
-
+visited=[False]*(n+1)
+def bfs(v):
+    q=deque()
+    q.append(v)
+    visited[v] = True
     while q:
-        now = q.popleft()
-        print(now, end=' ')
-        for i in graph[now]:
-            if not visited[i]:
-                visited[i] = True  
-                q.append(i)
+        v=q.popleft()
+        print(v, end=' ')
+        for node in graph[v]:
+            if not visited[node]:
+                visited[node]=True
+                q.append(node)
 
-
-visited = [False] * (N + 1)  
-bfs(V, visited)
+bfs(v)
