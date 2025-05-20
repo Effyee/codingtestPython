@@ -1,20 +1,14 @@
-tc = int(input())
-
-for tc in range(1, tc+1):
+t = int(input())
+for tc in range(1, t + 1):
     n = int(input())
-    farm = [list(map(int, input())) for _ in range(n)]
+    farm = [list(map(int, input().strip())) for _ in range(n)]
+    half = n // 2
     answer = 0
 
-    s, e = n // 2, n // 2
-    for i in range(n):
-        for j in range(s, e+1):
-            answer += farm[i][j]
+    for i in range(0, half + 1):
+        answer += sum(farm[i][half - i : half + i + 1])
+    for i in range(half + 1, n):
+        offset = i - half
+        answer += sum(farm[i][offset : n - offset])
 
-        if i < n // 2:
-            s -= 1
-            e += 1
-        else:
-            s += 1
-            e -= 1
-
-    print("#{} {}".format(tc, answer))
+    print(f'#{tc} {answer}')
