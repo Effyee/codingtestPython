@@ -1,18 +1,16 @@
-import sys
-input=sys.stdin.readline
-
 n,m=map(int,input().split())
-
-def backtrack(l,i):
-    if i-1>n:
+answer=set()
+def bt(idx,li):
+    if len(li)==m:
+        answer.add(' '.join(map(str,li)))
         return
-    if len(l)==m:
-        print(' '.join(map(str,l)))
+    if idx>n:
         return
-    l.append(i)
-    backtrack(l,i+1)
-    l.pop()
-    backtrack(l,i+1)
+    bt(idx+1,li+[idx])
+    bt(idx+1,li)
     return
 
-backtrack([],1)
+bt(1,[])
+answer=sorted(list(answer))
+for a in answer:
+    print(a)
