@@ -3,39 +3,39 @@ from collections import deque
 input = sys.stdin.readline
 
 graph = [list(input().strip()) for _ in range(5)]
-candidates = [(x, y) for x in range(5) for y in range(5)]
-answer = []
+answer = 0
+dx = [0, 0, -1, 1]
+dy = [-1, 1, 0, 0]
 
-def check(li):
-    cnt = sum(1 for x, y in li if graph[x][y] == 'S')
-    if cnt < 4:
-        return False
-
-    visited = set()
-    q = deque([li[0]])
-    visited.add(li[0])
+def is_connected(li):
     li_set = set(li)
+    start = li[0]  # pop 없이 첫 좌표 고정
+    q = deque([start])
+    visited = {start}
 
     while q:
         x, y = q.popleft()
-        for dx, dy in [(-1,0), (1,0), (0,-1), (0,1)]:
-            nx, ny = x + dx, y + dy
+        for d in range(4):
+            nx, ny = x + dx[d], y + dy[d]
             if (nx, ny) in li_set and (nx, ny) not in visited:
                 visited.add((nx, ny))
                 q.append((nx, ny))
-
     return len(visited) == 7
 
-def backtrack(idx, li):
+def bt(idx, li, s_cnt):
+    global answer
     if len(li) == 7:
-        if check(li):
-            answer.append(li)
+        if s_cnt >= 4 and is_connected(li):
+            answer += 1
         return
     if idx == 25:
         return
 
-    backtrack(idx + 1, li + [candidates[idx]])
-    backtrack(idx + 1, li)
+    x, y = divmod(idx, 5)
+    li.append((x, y))
+    bt(idx + 1, li, s_cnt + (1 if graph[x][y] == 'S' else 0))
+    li.pop()
+    bt(idx + 1, li, s_cnt)
 
-backtrack(0, [])
-print(len(answer))
+bt(0, [], 0)
+print(answer)
