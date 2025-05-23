@@ -1,37 +1,33 @@
 import sys
-input = sys.stdin.readline
+input=sys.stdin.readline
 
-def lower_bound(arr, x):
-    start, end = 0, len(arr)
-    while start < end:
-        mid = (start + end) // 2
-        if arr[mid] < x:
-            start = mid + 1
+n=int(input())
+arr=list(map(int,input().split()))
+arr.sort()
+m=int(input())
+targets=list(map(int,input().split()))
+
+def lower_bound(target):
+    start,end=0,len(arr)
+    while start<end:
+        mid=(start+end)//2
+        if arr[mid]<target:
+            start=mid+1
         else:
-            end = mid
+            end=mid
     return start
 
-def upper_bound(arr, x):
-    start, end = 0, len(arr)
-    while start < end:
-        mid = (start + end) // 2
-        if arr[mid] <= x:
-            start = mid + 1
+def upper_bound(target):
+    start,end=0,len(arr)
+    while start<end:
+        mid=(start+end)//2
+        if arr[mid]<=target:
+            start=mid+1
         else:
-            end = mid
+            end=mid
     return start
+answer=[]
+for i in range(m):
+    answer+=[upper_bound(targets[i])-lower_bound(targets[i])]
 
-n = int(input())
-cards = list(map(int, input().split()))
-cards.sort()
-
-m = int(input())
-queries = list(map(int, input().split()))
-
-result = []
-for x in queries:
-    low = lower_bound(cards, x)
-    high = upper_bound(cards, x)
-    result.append(str(high - low))
-
-print(' '.join(result))
+print(*answer)
