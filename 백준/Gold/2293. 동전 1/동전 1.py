@@ -1,13 +1,13 @@
-n, k = map(int, input().strip().split())
-arr = []
-for _ in range(n):
-    arr.append(int(input()))
+import sys
+input=sys.stdin.readline
 
-dp = [0 for i in range(k + 1)]
-dp[0] = 1
+n,k=map(int,input().split())
+coins=list(int(input()) for _ in range(n))
+dp=[0]*(k+1)
+dp[0]=1
 
-for coin in arr:
-    for i in range(coin, k + 1):
-        dp[i] += dp[i - coin]
+for coin in coins:
+    for i in range(coin,k+1):
+        dp[i]+=dp[i-coin]
 
-print(dp[k])
+print(dp[-1])
