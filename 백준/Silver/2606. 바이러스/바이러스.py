@@ -1,31 +1,23 @@
 import sys
-input = sys.stdin.readline
+input=sys.stdin.readline
 
-n = int(input())
-pairs = int(input())
+n=int(input())
+m=int(input())
+graph=[[] for _ in range(n+1)]
 
-def find_parent(x, parent):
-    if parent[x] != x:
-        parent[x] = find_parent(parent[x], parent)
-    return parent[x]
+for i in range(m):
+    a,b=map(int,input().split())
+    graph[a].append(b)
+    graph[b].append(a)
 
-def make_union(a, b, parent):
-    a = find_parent(a, parent)
-    b = find_parent(b, parent)
-    if a < b:
-        parent[b] = a
-    else:
-        parent[a] = b
+visited=[False]*(n+1)
 
-parent = [i for i in range(n+1)]
+def dfs(node):
+    visited[node]=True
+    for v in graph[node]:
+        if not visited[v]:
+            dfs(v)
+    return
 
-for _ in range(pairs):
-    a, b = map(int, input().split())
-    make_union(a, b, parent)
-
-answer = 0
-for i in range(2, n+1):
-    if find_parent(i, parent) == find_parent(1, parent):
-        answer += 1
-
-print(answer)
+dfs(1)
+print(sum(visited) - 1)
