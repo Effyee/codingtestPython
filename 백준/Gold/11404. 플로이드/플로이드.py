@@ -1,30 +1,31 @@
 import sys
-INF=int(1e9)
-input=sys.stdin.readline
+input = sys.stdin.readline
 
-n=int(input())
-m=int(input())
+INF = int(1e9)
+n = int(input())
+m = int(input())
 
-graph=[[INF]*(n) for _ in range(n)]
+graph = [[INF] * (n + 1) for _ in range(n + 1)]
+
+for i in range(1, n + 1):
+    graph[i][i] = 0
 
 for _ in range(m):
-    start,des,cost=map(int,input().split())
-    if graph[start-1][des-1]>cost:
-        graph[start-1][des-1]=cost
+    a, b, c = map(int, input().split())
+    # 여러 간선 중 최단 거리만 저장
+    if graph[a][b] > c:
+        graph[a][b] = c
 
-for i in range(n):
-    graph[i][i]=0
+for k in range(1, n + 1):
+    for i in range(1, n + 1):
+        for j in range(1, n + 1):
+            if graph[i][j] > graph[i][k] + graph[k][j]:
+                graph[i][j] = graph[i][k] + graph[k][j]
 
-for k in range(n):
-    for i in range(n):
-        for j in range(n):
-            graph[i][j]=min(graph[i][j],graph[i][k]+graph[k][j])
-for i in range(n):
-    for j in range(n):
-        if graph[i][j]==INF:
-            graph[i][j]=0
-
-for i in range(n):
-    s=' '.join(map(str,graph[i]))
-    print(s)
-
+for i in range(1, n + 1):
+    for j in range(1, n + 1):
+        if graph[i][j] == INF:
+            print(0, end=' ')
+        else:
+            print(graph[i][j], end=' ')
+    print()
