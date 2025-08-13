@@ -1,52 +1,47 @@
 import sys
 import heapq
-
 input=sys.stdin.readline
 INF=int(1e9)
+# n 명의 학생, m개의 도로, 도착지 x
+n,m,x=map(int,input().split())
+graph=[[] for _ in range(n+1)]
+reversed_graph=[[] for _ in range(n+1)]
 
-# n개의 마을, m개의 단방향 도로, x번 마을에서 파티
-n, m, x = map(int, input().split())
-
-# 원래 그래프와 역방향 그래프를 함께 생성
-graph = [[] for _ in range(n + 1)]
-reverse_graph = [[] for _ in range(n + 1)]
+# 학생-> 목표지점
+# 각 학생 집에서 목표 지점까지 dijkstra 돌리면
+# 너무 많이 걸리기 때문에 길을 반대로해서 구하고,
+# 목표지점-> 각 집
+# 그냥 목표지점에서 dijkstra 돌리면 된다.
 
 for _ in range(m):
-    # 시작점, 끝점, 소요 시간
-    start, end, cost = map(int, input().split())
-    graph[start].append((end, cost))
-    reverse_graph[end].append((start, cost))
+    start,end,dist=map(int,input().split())
+    graph[start].append((end,dist))
+    reversed_graph[end].append((start,dist))
 
-def dijkstra(start, graph_to_search):
-    # 각 실행마다 새로운 distance 배열을 만들어야 함
+
+
+def dijkstra(start,graph):
     distance = [INF] * (n + 1)
-    q = []
-    
-    heapq.heappush(q, (0, start))
-    distance[start] = 0
-    
-    while q:
-        dist, now = heapq.heappop(q)
-        if distance[now] < dist:
+    hq=[]
+    heapq.heappush(hq,(0,start))
+    distance[start]=0
+
+    while hq:
+        d,now=heapq.heappop(hq)
+        if d>distance[now]:
             continue
-        for nxt, cost in graph_to_search[now]:
-            d = cost + dist
-            if d < distance[nxt]:
-                distance[nxt] = d
-                heapq.heappush(q, (d, nxt))
-    return distance # 결과 배열을 반환
+        for nxt,cost in graph[now]:
+            dist=cost+d
+            if distance[nxt]>dist:
+                distance[nxt]=dist
+                heapq.heappush(hq,(dist,nxt))
+    return distance
 
-# 1. 파티에 '가는' 최단 시간 계산 (역방향 그래프 이용)
-go_to_party = dijkstra(x, reverse_graph)
+d1=dijkstra(x,reversed_graph)
+d2=dijkstra(x,graph)
 
-# 2. 파티에서 '돌아오는' 최단 시간 계산 (원래 그래프 이용)
-return_home = dijkstra(x, graph)
+answer=-int(1e9)
+for i in range(1,n+1):
+    answer=max(answer,d1[i]+d2[i])
 
-# 3. 왕복 시간 계산 및 최댓값 찾기
-max_time = 0
-for i in range(1, n + 1):
-    round_trip_time = go_to_party[i] + return_home[i]
-    if round_trip_time > max_time:
-        max_time = round_trip_time
-
-print(max_time)
+print(answer)
