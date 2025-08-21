@@ -1,18 +1,20 @@
 def solution(n, times):
     answer = 0
-    left = 1
-    right = max(times) * n
-
-    while left < right:
-        mid = (left + right) // 2
-
-        people = 0
+    # n: 기다리는 사람 수, times: 한 명을 심사하는 데 걸리는 시간
+    times.sort()
+    start,end=times[0],times[-1]*n
+    
+    while start<=end:
+        mid=(start+end)//2
+        print(f"start:{start}, end:{end}, mid:{mid}")
+        re=0
         for time in times:
-            people += mid // time
-
-        if people >= n:
-            right = mid  # 처리 인원이 n 이상이면 시간을 줄이기
+            re+=mid//time
+        print(re)
+        if re>=n:
+            answer=mid
+            end=mid-1
         else:
-            left = mid + 1  # 처리 인원이 n 미만이면 시간을 늘리기
-
-    return left  # left와 right가 만나는 지점이 최소 시간
+            start=mid+1
+            
+    return answer
