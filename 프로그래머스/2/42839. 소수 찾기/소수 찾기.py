@@ -1,21 +1,26 @@
 from itertools import permutations
-def check(number):
-    if number<=1:
-        return False
-    else:
-        for i in range(2,int((number)**(1/2)+1)):
-            if number%i==0:
-                return False
-        return True
+
+def isprime(m):
+    l = [False] * (m + 1)
+    l[0] = l[1] = True
+    for i in range(2, int(m**0.5) + 1):
+        if not l[i]:
+            for j in range(i*i, m+1, i):
+                l[j] = True
+    return l
+
 def solution(numbers):
     answer = 0
-    numbers=list(map(int,list(numbers)))
-    num_list=[]
-    for i in range(1,len(numbers)+1):
-        for p in permutations(numbers,i):
-            if int(''.join(map(str,p))) not in num_list:
-                num_list.append(int(''.join(map(str,p))))
-    for num in num_list:
-        if check(num):
-            answer+=1
+    li = set()
+    number = list(map(int, numbers.strip()))
+    
+    for i in range(1, len(number) + 1):
+        li |= {int(''.join(map(str, p))) for p in permutations(number, i)}
+    
+    m = max(li)
+    l = isprime(m)
+    
+    for x in li:
+        if not l[x]:
+            answer += 1
     return answer
