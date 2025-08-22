@@ -1,27 +1,31 @@
-# 각 경우의 수 별로 가장 짧은 거리가 최대가 되게 하는 것
 def solution(distance, rocks, n):
     answer = 0
     rocks.sort()
+    # 제거할 바위의 개수
+    # 최소거리, 최대 거리
     start,end=0,distance
     while start<=end:
         mid=(start+end)//2
-        prev,remove=0,0
-        # 없앨 바위의 개수를 세기
+        prev_rock,remove=0,0
+        
         for rock in rocks:
-            # 지금 간격보다 좁으면 바위를 없애기
-            if rock-prev<mid:
+            dist=rock-prev_rock
+            # 지정한 거리보다 좁으면, 바위를 제거
+            if dist<mid:
                 remove+=1
+            # 바위를 제거하지 않았다면 이전 바위의 위치를 업데이트
             else:
-                prev=rock
-        if distance-prev<mid:
+                prev_rock=rock
+                
+        if distance-prev_rock<mid:
             remove+=1
-        
-        # 바위를 n개 이상을 치워야 mid 유지 가능 -> 지금 간격이 넓음
-        if remove>n:
-            end=mid-1
-        
-        # 바위를 n개 이내로만 치워도 mid 유지 가능 -> 지금 간격이 좁음
-        else:
+            
+        # 제거한 바위가 많으면, 지정한 거리가 좁다는 뜻임
+        # 거리를 넓힌다
+        if remove<=n:
             answer=mid
             start=mid+1
+        # 제거한 바위가 적으면, 지정한 거리가 넓다는 뜻임
+        else:
+            end=mid-1
     return answer
