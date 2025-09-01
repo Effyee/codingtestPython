@@ -1,63 +1,50 @@
-from collections import deque
+from collections import defaultdict, deque
+import sys
+input=sys.stdin.readline
 
-#맵의 크기
 n=int(input())
+graph=[[0]*n for _ in range(n)]
 
-#맵:0, 뱀:1, 사과:2
-maps=[[0]*n for _ in range(n)]
-
-#사과 배치
 k=int(input())
-
 for _ in range(k):
     x,y=map(int,input().split())
-    maps[x-1][y-1]=2
+    graph[x-1][y-1]=1
 
-#방향 전환
 l=int(input())
-info={}
+d=defaultdict(int)
+for _ in range(l):
+    x,c=input().split()
+    d[int(x)]=c
 
-for i in range(l):
-    time,direction=input().split()
-    info[int(time)]=direction
-
-#방향
-#동,남,서,북
-dir=0
-time=0
-dx=[0,1,0,-1]
+dx=[0,1,0,-1]  # 오른쪽, 아래, 왼쪽, 위
 dy=[1,0,-1,0]
-x,y=0,0
-snakes=deque([(x,y)])
+
+direction=0
+time=0
+snake=deque()
+snake.append((0,0))
 
 while True:
+    x,y=snake[-1]   # 머리 좌표
+    nx,ny=x+dx[direction], y+dy[direction]
 
-    if time in info.keys():
-        if info[int(time)]=='D':
-            if dir==3:
-                dir=0
-            else:
-                dir+=1
-        else:
-            if dir==0:
-                dir=3
-            else:
-                dir-=1
-
-    nx=x+dx[dir]
-    ny=y+dy[dir]
-    time+=1
-
-    if nx<0 or ny<0 or nx>=n or ny>=n or (nx,ny) in snakes:
-        print(time)
+    # 벽이나 자기 몸에 부딪힘
+    if not (0<=nx<n and 0<=ny<n) or (nx,ny) in snake:
+        print(time+1)
         break
-    if maps[nx][ny]==2:
-        snakes.append((nx,ny))
-        maps[nx][ny]=1
-        x,y=nx,ny
-    else:
-        snakes.popleft()
-        snakes.append((nx, ny))
-        maps[x][y]=0
-        x, y = nx, ny
 
+    # 머리 이동
+    snake.append((nx,ny))
+    if graph[nx][ny]==1:   # 사과 있음
+        graph[nx][ny]=0
+    else:                  # 사과 없음 → 꼬리 제거
+        snake.popleft()
+
+    # 방향 전환
+    if time+1 in d:
+        if d[time+1]=='L':
+            direction=(direction-1)%4
+        else:
+            direction=(direction+1)%4
+
+    time+=1
