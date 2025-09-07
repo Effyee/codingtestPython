@@ -1,70 +1,75 @@
-from collections import deque
 import sys
-input = sys.stdin.readline # 빠른 입출력 위한 코드
- 
-n, m = map(int, input().split())
-graph = []
-for i in  range(n):
-    graph.append(list(input()))
-    for j in range(m):
-        if graph[i][j] == 'R': # 빨간구슬 위치
-            rx, ry = i, j
-        elif graph[i][j] == 'B': # 파란구슬 위치
-            bx, by = i, j
- 
-# 상 하 좌 우로 탐색
-dx = [-1, 1, 0, 0]
-dy = [0, 0, -1 ,1]
- 
-def bfs(rx, ry, bx, by):
-    q = deque()
-    q.append((rx, ry, bx, by))
-    visited = [] # 방문여부를 판단하기 위한 리스트
-    visited.append((rx, ry, bx, by))
-    count = 0
+from collections import deque
+input=sys.stdin.readline
+
+n,m=map(int,input().split())
+graph=[list(input().strip()) for _ in range(n)]
+
+dx=[0,0,-1,1]
+dy=[-1,1,0,0]
+visited=set()
+# 파랑, 빨강 구슬이 같은 칸에 도달하게 되는 순간
+# 원래 위치로부터의 거리를 구하고, 길이가 긴게 짤은 것의 뒤로 가도록
+def bfs(rx,ry,bx,by):
+    q=deque()
+    q.append((rx,ry,bx,by,0))
+    visited.add((rx,ry,bx,by))
     while q:
-        for _ in range(len(q)):
-            rx, ry, bx, by = q.popleft()
-            if count > 10: # 움직인 횟수가 10회 초과면 -1 출력
-                print(-1)
-                return
-            if graph[rx][ry] == 'O': # 현재 빨간 구슬의 위치가 구멍이라면 count출력
-                print(count)
-                return 
-            for i in range(4): # 4방향 탐색
-                nrx, nry = rx, ry
-                while True: # #일 때까지 혹은 구멍일 때까지 움직임
-                    nrx += dx[i]
-                    nry += dy[i]
-                    if graph[nrx][nry] == '#': # 벽인 경우 왔던 방향 그대로 한칸 뒤로 이동
-                        nrx -= dx[i]
-                        nry -= dy[i]
-                        break
-                    if graph[nrx][nry] == 'O':
-                        break
-                nbx, nby = bx, by
-                while True: # #일 때까지 혹은 구멍일 때까지 움직임
-                    nbx += dx[i]
-                    nby += dy[i]
-                    if graph[nbx][nby] == '#': # 벽인 경우 왔던 방향 그대로 한칸 뒤로 이동
-                        nbx -= dx[i]
-                        nby -= dy[i]
-                        break
-                    if graph[nbx][nby] == 'O':
-                        break
-                if graph[nbx][nby] == 'O': # 파란구슬이 먼저 구멍에 들어가거나 동시에 들어가면 안됨 따라서 이 경우 무시
-                    continue
-                if nrx == nbx and nry == nby: # 두 구슬의 위치가 같다면
-                    if abs(nrx - rx) + abs(nry - ry) > abs(nbx - bx) + abs(nby - by): # 더 많이 이동한 구슬이 더 늦게 이동한 구슬이므로 늦게 이동한 구슬 한칸 뒤로 이동
-                        nrx -= dx[i]
-                        nry -= dy[i]
-                    else:
-                        nbx -= dx[i]
-                        nby -= dy[i]
-                if (nrx, nry, nbx, nby) not in visited: # 방문해본적이 없는 위치라면 새로 큐에 추가 후 방문 처리
-                    q.append((nrx, nry, nbx, nby))
-                    visited.append((nrx, nry, nbx, nby))
-        count += 1
-    print(-1) # 10회가 초과하지 않았지만 10회 내에도 구멍에 들어가지 못하는 경우
-bfs(rx, ry, bx, by)
- 
+        rx,ry,bx,by,dist=q.popleft()
+        if dist==10:
+            return -1
+        for i in range(4):
+            nrx,nry,nbx,nby=rx,ry,bx,by
+            flag=False
+            # 파랑 구슬의 이동
+            while True:
+                if nbx+dx[i]<0 or nbx+dx[i]>=n or nby+dy[i]<0 or nby+dy[i]>=m or graph[nbx+dx[i]][nby+dy[i]]=='#':
+                    break
+                nbx += dx[i]
+                nby += dy[i]
+                if graph[nbx][nby]=='O':
+                    flag=True
+                    break
+
+            # 파랑 구슬이 구멍에 들어가 버린 경우, 아래를 진행X
+            if flag:
+                continue
+
+            # 빨강 구슬의 이동
+            while True:
+                if nrx+dx[i]<0 or nrx+dx[i]>=n or nry+dy[i]<0 or nry+dy[i]>=m or graph[nrx+dx[i]][nry+dy[i]]=='#':
+                    break
+                nrx += dx[i]
+                nry += dy[i]
+                # 빨강 구슬이 구멍에 들어간 경우, 바로 답을 반환
+                if graph[nrx][nry] == 'O':
+                    return dist + 1
+
+            # 둘이 이동을 마치고 난 뒤에, 위치가 같으면 보정
+            if (nrx,nry)==(nbx,nby):
+                red_dist=abs(nrx-rx)+abs(nry-ry)
+                blue_dist=abs(nbx-bx)+abs(nby-by)
+                if red_dist>blue_dist:
+                    nrx-=dx[i]
+                    nry-=dy[i]
+                else:
+                    nbx-=dx[i]
+                    nby-=dy[i]
+
+            # 방문한 적이 없는 경우
+            if (nrx,nry,nbx,nby) not in visited:
+                visited.add((nrx,nry,nbx,nby))
+                q.append((nrx,nry,nbx,nby,dist+1))
+
+    return -1
+
+rx,ry,bx,by=0,0,0,0
+for x in range(n):
+    for y in range(m):
+        if graph[x][y]=='R':
+            rx,ry=x,y
+        if graph[x][y]=='B':
+            bx,by=x,y
+
+answer=bfs(rx,ry,bx,by)
+print(answer)
