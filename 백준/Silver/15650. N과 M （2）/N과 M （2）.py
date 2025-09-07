@@ -1,16 +1,16 @@
+import sys
+input=sys.stdin.readline
+
 n,m=map(int,input().split())
-answer=set()
-def bt(idx,li):
+
+def bt(li,idx):
     if len(li)==m:
-        answer.add(' '.join(map(str,li)))
+        print(*li)
         return
-    if idx>n:
-        return
-    bt(idx+1,li+[idx])
-    bt(idx+1,li)
+    for i in range(idx,n+1):
+        li.append(i)
+        bt(li,i+1)
+        li.pop()
     return
 
-bt(1,[])
-answer=sorted(list(answer))
-for a in answer:
-    print(a)
+bt([],1)
