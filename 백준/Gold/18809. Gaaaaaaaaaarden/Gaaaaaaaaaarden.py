@@ -1,66 +1,72 @@
+import sys
 from collections import deque
-from itertools import combinations
+input=sys.stdin.readline
 
-# 입력
-n, m, g, r = map(int, input().split())
-garden = [list(map(int, input().split())) for _ in range(n)]
+"""
+1. 하얀색: 배양액X->1
+2. 황토색: 배양액O->2
+3. 하늘색: 호수->0
+# 동일 시간에 도달, 꽃이 핌
+"""
+n,m,g,r=map(int,input().split())
+garden=[list(map(int,input().split())) for _ in range(n)]
 
-# 배양액을 뿌릴 수 있는 위치
-poses = [(x, y) for x in range(n) for y in range(m) if garden[x][y] == 2]
-
-pos_combinations = []
-
-# G + R 개 조합 만들기
-def backtrack(idx, li):
-    if len(li) == g + r:
-        pos_combinations.append(li[:])
-        return
-    if idx == len(poses):
-        return
-    backtrack(idx + 1, li + [poses[idx]])
-    backtrack(idx + 1, li)
-
-backtrack(0, [])
-
-# BFS 시뮬레이션 함수
-def simulate(green, red):
-    q = deque()
-    color = [[-1] * m for _ in range(n)]  # -1: 없음, 1: 초록, 2: 빨강, 3: 꽃
-    time = [[-1] * m for _ in range(n)]
-
-    for gx, gy in green:
-        q.append((gx, gy))
-        color[gx][gy] = 1
-        time[gx][gy] = 0
-
-    for rx, ry in red:
-        q.append((rx, ry))
-        color[rx][ry] = 2
-        time[rx][ry] = 0
-
-    flowers = 0
-    while q:
-        x, y = q.popleft()
-        if color[x][y] == 3:
-            continue
-        for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-            nx, ny = x + dx, y + dy
-            if 0 <= nx < n and 0 <= ny < m and garden[nx][ny] != 0:
-                if color[nx][ny] == -1:
-                    color[nx][ny] = color[x][y]
-                    time[nx][ny] = time[x][y] + 1
-                    q.append((nx, ny))
-                elif (color[nx][ny] != color[x][y] and time[nx][ny] == time[x][y] + 1 and color[nx][ny] != 3):
-                    color[nx][ny] = 3
-                    flowers += 1
-    return flowers
-
-# 최대 꽃 개수 계산
 answer = 0
-for comb in pos_combinations:
-    for green in combinations(comb, g):
-        red = [p for p in comb if p not in green]
-        flowers = simulate(green, red)
-        answer = max(answer, flowers)
 
+def choose_RG(gc, rc, li, start, coords):
+    global answer
+    if gc == g and rc == r:
+        visited = [[[0, 0] for _ in range(m)] for _ in range(n)]
+        q = deque()
+        for color, x, y in li:
+            visited[x][y] = [color, 0]
+            q.append((color, x, y, 0))
+
+        dx = [0, 0, -1, 1]
+        dy = [-1, 1, 0, 0]
+        result = 0
+
+        while q:
+            color, x, y, cnt = q.popleft()
+            if visited[x][y][0] == 'f':  # 꽃이면 확산 중단
+                continue
+            for i in range(4):
+                nx, ny = x + dx[i], y + dy[i]
+                if 0 <= nx < n and 0 <= ny < m:
+                    # 배양액 가능한 땅(황토색)이고 아직 방문 X
+                    if visited[nx][ny][0] == 0 and (garden[nx][ny] == 1 or garden[nx][ny] == 2):
+                        visited[nx][ny] = [color, cnt+1]
+                        q.append((color, nx, ny, cnt+1))
+                    # 다른 색과 동시에 도착 → 꽃
+                    elif color == 'r' and visited[nx][ny][0] == 'g' and visited[nx][ny][1] == cnt+1:
+                        visited[nx][ny] = ['f', cnt+1]
+                        result += 1
+                    elif color == 'g' and visited[nx][ny][0] == 'r' and visited[nx][ny][1] == cnt+1:
+                        visited[nx][ny] = ['f', cnt+1]
+                        result += 1
+
+        answer = max(answer, result)
+        return
+
+    if gc > g or rc > r:
+        return
+
+    for i in range(start, len(coords)):
+        choose_RG(gc+1, rc, li+[('g', coords[i][0], coords[i][1])], i+1, coords)
+        choose_RG(gc, rc+1, li+[('r', coords[i][0], coords[i][1])], i+1, coords)
+
+
+def choose_XY(n,m,k,choosen,idx):
+    if len(choosen) == k:
+        coords=[divmod(c,m) for c in choosen]
+        choose_RG(0,0,[],0,coords)
+        return
+    for i in range(idx, n*m):
+        x, y = divmod(i, m)
+        if garden[x][y] == 2:  # 황토색 땅만 선택
+            choose_XY(n,m,k,choosen+[i],i+1)
+    return
+
+
+choose_XY(n,m,g+r,[],0)
 print(answer)
