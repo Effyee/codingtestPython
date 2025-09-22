@@ -2,32 +2,33 @@ import sys
 input = sys.stdin.readline
 
 n = int(input())
-s = [list(map(int, input().split())) for _ in range(n)]
+graph = [list(map(int,input().split())) for _ in range(n)]
 
-visited = [False] * n
-answer = int(1e9)
+answer = float('inf')
+total = set(range(n))
 
-def calc_diff():
-    start, link = 0, 0
-    for i in range(n):
-        for j in range(n):
-            if visited[i] and visited[j]:
-                start += s[i][j]
-            elif not visited[i] and not visited[j]:
-                link += s[i][j]
-    return abs(start - link)
+# 팀 내 2명 조합 시너지 합 구하기
+def team_score(team):
+    res = 0
+    for i in range(len(team)):
+        for j in range(i+1, len(team)):
+            a, b = team[i], team[j]
+            res += graph[a][b] + graph[b][a]
+    return res
 
-def bt(depth, idx):
+def comb(start=0, li=[]):
     global answer
-    if depth == n // 2:
-        diff = calc_diff()
+    # 팀 A 구성 완료
+    if len(li) == n//2:
+        teamA = li
+        teamB = list(total - set(teamA))
+        diff = abs(team_score(teamA) - team_score(teamB))
         answer = min(answer, diff)
         return
-    for i in range(idx, n):
-        if not visited[i]:
-            visited[i] = True
-            bt(depth + 1, i + 1)
-            visited[i] = False
+    
+    # 백트래킹으로 팀 A 구성
+    for i in range(start, n):
+        comb(i+1, li + [i])
 
-bt(0, 0)
+comb()
 print(answer)
