@@ -4,19 +4,21 @@ input = sys.stdin.readline
 n, s = map(int, input().split())
 arr = list(map(int, input().split()))
 
-re = 0
-start, end = 0, 0
-answer = int(1e9)
+left = 0
+right = 0
+current = 0
+INF = 10**9
+answer = INF
 
-while end <= n: 
-    if re < s:
-        if end == n:  
+while True:
+    if current >= s:
+        answer = min(answer, right - left)
+        current -= arr[left]
+        left += 1
+    else:
+        if right == n:
             break
-        re += arr[end]
-        end += 1
-    elif re >= s:
-        answer = min(answer, end - start)
-        re -= arr[start]
-        start += 1
+        current += arr[right]
+        right += 1
 
-print(0 if answer == int(1e9) else answer)
+print(0 if answer == INF else answer)
