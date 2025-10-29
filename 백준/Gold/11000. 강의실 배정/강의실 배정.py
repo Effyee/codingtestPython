@@ -3,20 +3,20 @@ import heapq
 input = sys.stdin.readline
 
 n = int(input())
-classes = [list(map(int, input().split())) for _ in range(n)]
+classes = []
+for _ in range(n):
+    start, end = map(int, input().split())
+    classes.append((start, end))
 
-classes.sort()
-
+classes.sort()  
 hq = []
-heapq.heappush(hq, classes[0][1])
+answer = 0
 
-for i in range(1, n):
-    start, end = classes[i]
-
-    # 가장 빨리 끝나는 수업이 현재 수업보다 먼저 끝났으면, 그 강의실 재사용
-    if hq[0] <= start:
+for start, end in classes:
+    # 가장 빨리 끝나는 강의실이 현재 수업 시작 전에 끝났으면 재활용
+    if hq and hq[0] <= start:
         heapq.heappop(hq)
-
     heapq.heappush(hq, end)
+    answer = max(answer, len(hq))
 
-print(len(hq))
+print(answer)
