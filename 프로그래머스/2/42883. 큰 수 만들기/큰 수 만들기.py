@@ -1,14 +1,14 @@
 def solution(number, k):
-    num = list(map(int, number))
-    stack = []
-    cnt = 0
-    for n in num:
-        while stack and cnt < k and stack[-1] < n:
+    answer = ''
+    stack=[]
+    num=list(map(int,number))
+    count=0
+    
+    for i in range(len(num)):
+        while stack and stack[-1]<num[i] and count<k:
             stack.pop()
-            cnt += 1
-        stack.append(n)
-    # 남은 제거
-    while cnt < k:
-        stack.pop()
-        cnt += 1
-    return ''.join(map(str, stack))
+            count+=1
+        stack.append(num[i])
+    
+    stack=stack[:len(number)-k]
+    return ''.join(map(str,stack))
