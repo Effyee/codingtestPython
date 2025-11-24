@@ -2,72 +2,78 @@ import sys
 from collections import deque
 input = sys.stdin.readline
 
-n,m,t = map(int,input().split())
-board = [[0]*m] + [list(map(int,input().split())) for _ in range(n)]
-move = [list(map(int,input().split())) for _ in range(t)]
+N, M, T = map(int, input().split())
+arr = [deque(map(int, input().split())) for _ in range(N)]
 
-dx = [0,0,-1,1]
-dy = [-1,1,0,0]
-
-def bfs(x,y,visited):
+# BFS로 같은 인접 수 찾기
+def bfs(i, j, visited):
     q = deque()
-    q.append((x,y))
-    visited[x][y] = True
-    s = {(x,y)}
+    q.append((i, j))
+    visited[i][j] = True
+
+    value = arr[i][j]
+    same = [(i, j)]
+
     while q:
-        cx,cy = q.popleft()
-        for i in range(4):
-            nx = cx + dx[i]
-            ny = (cy + dy[i]) % m   # 원판은 원형
-            if 1 <= nx <= n and not visited[nx][ny] and board[nx][ny] == board[x][y]:
+        x, y = q.popleft()
+        
+        # 상하좌우
+        for dx, dy in [(-1,0), (1,0), (0,-1), (0,1)]:
+            nx = x + dx
+            ny = (y + dy) % M   # 원형 처리
+
+            if 0 <= nx < N and not visited[nx][ny] and arr[nx][ny] == value:
                 visited[nx][ny] = True
-                s.add((nx,ny))
-                q.append((nx,ny))
-    return s
+                q.append((nx, ny))
+                same.append((nx, ny))
 
-for x,d,k in move:
+    return same
+
+
+for _ in range(T):
+    x, d, k = map(int, input().split())
+
     # 1. 회전
-    for i in range(x, n+1, x):
-        k %= m
-        if d == 0:  # 시계
-            board[i] = board[i][-k:] + board[i][:-k]
-        else:       # 반시계
-            board[i] = board[i][k:] + board[i][:k]
+    for i in range(x-1, N, x):
+        if d == 0:      # 시계
+            arr[i].rotate(k)
+        else:           # 반시계
+            arr[i].rotate(-k)
 
-    # 2. 인접 같은 수 찾기
-    # 2. 인접 같은 수 찾기
-    visited = [[False] * m for _ in range(n + 1)]
-    remove = set()
-    for a in range(1, n + 1):
-        for b in range(m):
-            if board[a][b] != 0 and not visited[a][b]:
-                group = bfs(a, b, visited)
-                if len(group) > 1:
-                    remove |= group
+    # 2. 인접하면서 같은 수 찾기
+    visited = [[False] * M for _ in range(N)]
+    to_remove = []
+    for i in range(N):
+        for j in range(M):
+            if arr[i][j] != 0 and not visited[i][j]:
+                same = bfs(i, j, visited)
+                if len(same) > 1:
+                    to_remove.extend(same)
 
-    if remove:
-        for x, y in remove:
-            board[x][y] = 0
+    # 3. 지울 것이 있다면 지움
+    if to_remove:
+        for i, j in to_remove:
+            arr[i][j] = 0
     else:
+        # 4. 평균 계산 후 조정
         total = 0
-        cnt = 0
-        for i in range(1, n + 1):
-            for j in range(m):
-                if board[i][j] != 0:
-                    total += board[i][j]
-                    cnt += 1
-        if cnt > 0:
-            average = total / cnt
-            for i in range(1, n + 1):
-                for j in range(m):
-                    if board[i][j] == 0: continue
-                    if board[i][j] > average:
-                        board[i][j] -= 1
-                    elif board[i][j] < average:
-                        board[i][j] += 1
+        count = 0
+        for i in range(N):
+            for j in range(M):
+                if arr[i][j] > 0:
+                    total += arr[i][j]
+                    count += 1
 
-answer=0
-for i in range(1,n+1):
-    for j in range(m):
-        answer+=board[i][j]
+        if count > 0:
+            avg = total / count
+            for i in range(N):
+                for j in range(M):
+                    if arr[i][j] > 0:
+                        if arr[i][j] > avg:
+                            arr[i][j] -= 1
+                        elif arr[i][j] < avg:
+                            arr[i][j] += 1
+
+# 5. 최종 합 출력
+answer = sum(sum(row) for row in arr)
 print(answer)
