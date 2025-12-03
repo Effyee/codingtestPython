@@ -1,13 +1,15 @@
 import sys
+
 input=sys.stdin.readline
 
 n,m=map(int,input().split())
 arr=list(map(int,input().split()))
-prefix=[0]*(n+1)
-prefix[1]=arr[0]
-for i in range(2,n+1):
-    prefix[i]=arr[i-1]+prefix[i-1]
+p=[0]*(n+1)
+p[0]=arr[0]
+for i in range(1,n):
+    p[i]=p[i-1]+arr[i]
+p.insert(0,0)
 
 for _ in range(m):
-    s,e=map(int,input().split())
-    print(prefix[e]-prefix[s-1])
+    start,end=map(int,input().split())
+    print(p[end]-p[start-1])
