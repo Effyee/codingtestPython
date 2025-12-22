@@ -1,22 +1,26 @@
+INF = int(1e9)
+
 def solution(info, n, m):
-    answer = 0
-    INF=int(1e9)
-    dp=[INF]*m
-    dp[0]=0
-    for a_trace,b_trace in info:
-        new_dp=[INF]*(m)
-        for prev_b in range(m):
-            if dp[prev_b]==INF:
+    # arr[b] = B 흔적이 b일 때 가능한 A 흔적 최소값
+    arr = [INF] * m
+    arr[0] = 0
+
+    for A, B in info:
+        new_arr = [INF] * m  # 반드시 새로 만들어야 함
+
+        for b in range(m):
+            if arr[b] == INF:
                 continue
+
             # A가 훔치는 경우
-            a_new=a_trace+dp[prev_b]
-            if a_new<n:
-                new_dp[prev_b]=min(a_new,new_dp[prev_b])
+            if arr[b] + A < n:
+                new_arr[b] = min(new_arr[b], arr[b] + A)
+
             # B가 훔치는 경우
-            b_new=b_trace+prev_b
-            if b_new<m:
-                new_dp[b_new]=min(dp[prev_b],new_dp[b_new])
-        dp=new_dp
-    if min(dp)==INF:
-        return -1
-    return min(dp)
+            if b + B < m:
+                new_arr[b + B] = min(new_arr[b + B], arr[b])
+
+        arr = new_arr
+
+    res = min(arr)
+    return res if res < INF else -1
