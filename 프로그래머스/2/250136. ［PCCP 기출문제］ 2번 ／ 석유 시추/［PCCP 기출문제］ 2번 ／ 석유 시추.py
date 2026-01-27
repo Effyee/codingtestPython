@@ -1,46 +1,55 @@
-from collections import deque, defaultdict
+from collections import defaultdict, deque
 
 def solution(land):
     n, m = len(land), len(land[0])
     visited = [[False]*m for _ in range(n)]
+    # oil_size[oil_id]=해당 오일 덩어리 크기
+    # column_oils[행 번호]=oil_id
+    oil_size = dict()              # oil_id -> 덩어리 크기
+    column_oils = defaultdict(set) # col -> 포함된 oil_id
+    oil_id = 0
 
-    cluster_id = 1
-    coords = {}            # (x,y) -> cluster_id
-    oil_size = {}          # cluster_id -> 덩어리 크기
-    cols_in_cluster = defaultdict(set)  # cluster_id -> 덩어리가 포함된 열
+    def bfs(x, y):
+        dx = [0, 0, -1, 1]
+        dy = [-1, 1, 0, 0]
 
-    def bfs(sx, sy, cid):
-        q = deque([(sx, sy)])
-        visited[sx][sy] = True
-        coords[(sx, sy)] = cid
-        size = 1
-        cols = {sy}
+        q = deque()
+        q.append((x, y))
+        visited[x][y] = True
+
+        count = 1
+        cols = {y}   # ⭐ 이 덩어리가 포함하는 열들
 
         while q:
             x, y = q.popleft()
-            for dx, dy in [(0,1),(0,-1),(1,0),(-1,0)]:
-                nx, ny = x+dx, y+dy
+            for i in range(4):
+                nx, ny = x + dx[i], y + dy[i]
                 if 0 <= nx < n and 0 <= ny < m:
                     if not visited[nx][ny] and land[nx][ny] == 1:
                         visited[nx][ny] = True
                         q.append((nx, ny))
-                        coords[(nx, ny)] = cid
-                        size += 1
+                        count += 1
                         cols.add(ny)
-        oil_size[cid] = size
-        cols_in_cluster[cid] = cols
-    
-    # cluster labeling
-    for i in range(n):
-        for j in range(m):
-            if land[i][j] == 1 and not visited[i][j]:
-                bfs(i, j, cluster_id)
-                cluster_id += 1
 
-    #열별 석유량
-    col_score = [0]*m
-    for cid, cols in cols_in_cluster.items():
-        for c in cols:
-            col_score[c] += oil_size[cid]
-    return max(col_score)
-    
+        return count, cols
+
+    # 1️⃣ 모든 오일 덩어리 분리
+    for x in range(n):
+        for y in range(m):
+            if land[x][y] == 1 and not visited[x][y]:
+                count, cols = bfs(x, y)
+                oil_size[oil_id] = count
+                for col in cols:
+                    column_oils[col].add(oil_id)
+                oil_id += 1
+
+    # 2️⃣ 열별 시추 결과 계산
+    answer = 0
+    for col in range(m):
+        total = 0
+        for oid in column_oils[col]:
+            total += oil_size[oid]
+        answer = max(answer, total)
+    # print(oil_size)
+    # print(column_oils)
+    return answer
