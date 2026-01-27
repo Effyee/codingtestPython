@@ -1,39 +1,33 @@
-from collections import defaultdict, Counter
+from collections import defaultdict
 
 def solution(points, routes):
     answer = 0
-    dic = defaultdict(list)
-    
-    for route in routes:    
-        path = []
-        idx = 0
-        for i in range(1, len(route)):
-            x, y = points[route[i-1]-1][0], points[route[i-1]-1][1]
-            target_x, target_y = points[route[i]-1][0], points[route[i]-1][1]
-            
-            if i == 1:
-                dic[idx].append((x,y))
-            
-            while x != target_x:
-                if x < target_x:
-                    x+=1
-                else:
-                    x-=1
-                idx+=1
-                dic[idx].append((x,y))
-            
-            while y != target_y:
-                if y < target_y:
-                    y+=1
-                else:
-                    y-=1
-                idx+=1
-                dic[idx].append((x,y))
+    time_location = defaultdict(list)
 
-    for key in dic:
-        c = Counter(dic[key])
-        for key in c:
-            if c[key] > 1:
+    for route in routes:
+        time = 0
+        x, y = points[route[0]-1]
+        time_location[0].append((x, y))  # 시작 위치 기록
+
+        for i in range(len(route) - 1):
+            nx, ny = points[route[i+1]-1]
+
+            # r 먼저 이동
+            while x != nx:
+                x += 1 if nx > x else -1
+                time += 1
+                time_location[time].append((x, y))
+
+            # c 이동
+            while y != ny:
+                y += 1 if ny > y else -1
+                time += 1
+                time_location[time].append((x, y))
+    for t in time_location:
+        counter = defaultdict(int)
+        for pos in time_location[t]:
+            counter[pos] += 1
+        for cnt in counter.values():
+            if cnt >= 2:
                 answer += 1
-    
     return answer
