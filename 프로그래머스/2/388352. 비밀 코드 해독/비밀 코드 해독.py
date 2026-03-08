@@ -1,25 +1,19 @@
+from itertools import combinations
 def solution(n, q, ans):
     answer = 0
-    def check(li):
+    cans=[i for i in range(1,n+1)]
+    for i in range(len(q)):
+        if ans[i]==0:
+            for j in q[i]:
+                if j in cans:
+                    cans.remove(j)
+                
+    for c in combinations(cans,5):
+        flag=True
         for i in range(len(q)):
-            if len(set(li)&set(q[i]))!=ans[i]:
-                return False
-        return True
-    
-    def backtrack(idx,li):
-        nonlocal answer
-        if len(li)==5:
-            if check(li):
-                answer+=1
-            return
-        if idx==n+1:
-            return
-        for i in range(idx,n+1):
-            li.append(i)
-            backtrack(i+1,li)
-            li.pop()
-        return
-    
-    backtrack(1,[])
-    
+            if len(set(c) & set(q[i]))!=ans[i]:
+                flag=False
+                break
+        if flag:
+            answer+=1
     return answer
