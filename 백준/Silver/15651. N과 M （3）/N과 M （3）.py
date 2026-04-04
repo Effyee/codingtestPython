@@ -2,18 +2,12 @@ import sys
 input=sys.stdin.readline
 
 n,m=map(int,input().split())
-answer=[]
-
-def backtrack():
-    global answer
-
-    if len(answer)==m:
-        print(' '.join(map(str,answer)))
+def bt(li):
+    if len(li)==m:
+        print(*li)
         return
-
     for i in range(1,n+1):
-        answer.append(i)
-        backtrack()
-        answer.pop()
+        bt(li+[i])
+    return
 
-backtrack()
+bt([])
