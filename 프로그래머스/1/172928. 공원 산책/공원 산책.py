@@ -1,55 +1,35 @@
 def solution(park, routes):
-
-    # 문자열 -> 2차원 리스트
-    p = [list(row) for row in park]
-
-    # 시작 위치 찾기
-    x, y = 0, 0
-
-    for i in range(len(p)):
-        for j in range(len(p[0])):
-            if p[i][j] == 'S':
-                x, y = i, j
-
-    # 방향 설정
-    dir_map = {
-        'E': (0, 1),
-        'W': (0, -1),
-        'S': (1, 0),
-        'N': (-1, 0)
+    answer = []
+    dir={
+        'N':(-1,0),
+        'S':(1,0),
+        'W':(0,-1),
+        'E':(0,1)
     }
-
-    # 명령 수행
+    park=[list(park[i]) for i in range(0,len(park))]
+    
+    #시작지점 초기화
+    x,y=0,0
+    
+    for i in range(len(park)):
+        for j in range(len(park[0])):
+            if park[i][j]=='S':
+                x,y=i,j
+                break;
+    
+    
     for route in routes:
-
-        direction, count = route.split()
-        count = int(count)
-
-        dx, dy = dir_map[direction]
-
-        # 현재 위치 저장
-        nx, ny = x, y
-
-        # 이동 가능한지 확인
-        possible = True
-
-        for _ in range(count):
-
-            nx += dx
-            ny += dy
-
-            # 범위 밖 체크
-            if nx < 0 or ny < 0 or nx >= len(p) or ny >= len(p[0]):
-                possible = False
+        d,c=route.split()
+        c=int(c)
+        nx,ny=x,y
+        dx,dy=dir[d]
+        for i in range(c):
+            if(0<=nx+dx<len(park) and 0<=ny+dy<len(park[0]) and park[nx+dx][ny+dy]!='X'):
+                nx=nx+dx
+                ny=ny+dy
+            else:
+                nx,ny=x,y
                 break
-
-            # 장애물 체크
-            if p[nx][ny] == 'X':
-                possible = False
-                break
-
-        # 이동 가능하면 최종 위치 반영
-        if possible:
-            x, y = nx, ny
-
-    return [x, y]
+        x,y=nx,ny
+            
+    return [x,y]
