@@ -1,22 +1,33 @@
 from collections import deque
-
 def solution(begin, target, words):
+    answer = 0
+    visited=[False]*len(words);
+    
     if target not in words:
         return 0
     
-    def one_diff(w1, w2):
-        return sum(a!=b for a,b in zip(w1, w2)) == 1
+    def check(now,word):
+        diff=0;
+        for n,w in zip(now,word):
+            if n!=w:
+                diff+=1
+        if diff==1:
+            return True
+        return False
     
-    q = deque()
-    q.append((begin, 0))
-    visited = [False] * len(words)
-    
-    while q:
-        now, cnt = q.popleft()
-        if now == target:
-            return cnt
-        for i, word in enumerate(words):
-            if not visited[i] and one_diff(now, word):
-                visited[i] = True
-                q.append((word, cnt+1))
-    return 0
+    def bfs():
+        q=deque()
+        q.append((begin,0))
+        while q:
+            w,c=q.popleft();
+            if w==target:
+                return c
+            
+            for i in range(len(words)):
+                if not visited[i]:
+                    if check(words[i],w):
+                        visited[i]=True
+                        q.append((words[i],c+1))        
+        
+    answer=bfs()
+    return answer
