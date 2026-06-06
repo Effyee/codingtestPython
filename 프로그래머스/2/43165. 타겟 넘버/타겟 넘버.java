@@ -1,20 +1,23 @@
+import java.util.*;
+
 class Solution {
-    int answer = 0;
+    int answer=0;
     public int solution(int[] numbers, int target) {
         
-        dfs(0,numbers,target,0);
-        
+        dfs(numbers, target, 0, 0);
         return answer;
     }
-    
-    public void dfs(int result, int[] numbers, int target, int idx){
+    void dfs(int[] numbers, int target, int idx, int result){
+        
         if(idx==numbers.length){
-            if(target==result){
+            if(result==target){
                 answer++;
+                return;
             }
             return;
         }
-        dfs(result+numbers[idx],numbers,target,idx+1);
-        dfs(result-numbers[idx],numbers,target,idx+1);
+        
+        dfs(numbers, target, idx+1, result+numbers[idx]);
+        dfs(numbers, target, idx+1, result-numbers[idx]);
     }
 }
