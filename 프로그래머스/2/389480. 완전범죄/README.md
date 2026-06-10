@@ -1,10 +1,10 @@
 # [level 2] 완전범죄 - 389480 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/389480?language=python3) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/389480) 
 
 ### 성능 요약
 
-메모리: 9.39 MB, 시간: 1.08 ms
+메모리: 11.3 MB, 시간: 0.24 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2025년 12월 22일 12:38:58
+2026년 06월 10일 11:15:42
 
 ### 문제 설명
 
